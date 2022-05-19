@@ -4,15 +4,7 @@ new Vue({
         saludJugador: 100,
         saludMonstruo: 100,
         hayUnaPartidaEnJuego: false,
-        turnos: [
-            {
-                esJugador:true,
-                Text:' el jugador atacó al monstruo por ' + damage
-            },
-            {
-                esJugador:false,
-                Text:' el monstruo atacó al monstruo por ' + damage
-            } ],//es para registrar los eventos de la partida
+        turnos: [],//es para registrar los eventos de la partida
         esJugador: false,
         rangoAtaque: [3, 10],
         rangoAtaqueEspecial: [10, 20],
@@ -33,21 +25,29 @@ new Vue({
         atacar: function () {
             var damage= this.calcularHeridas(3,10);
             this.saludMonstruo -=damage;
+            this.turnos.unshift({
+                esJugador: true,
+                text: 'el jugador golpea al monstruo por ' + damage
+            });
             if(this.verificarGanador()){
                 return;
             }
             this.ataqueDelMonstruo();
+            
         },
 
         ataqueEspecial: function () {
             var damage=this.calcularHeridas(10,20);
             this.saludMonstruo-= damage;
-
+            this.turnos.unshift({
+                esJugador: true,
+                text: 'el jugador golpea al monstruo por ' + damage
+            });
+            this.ataqueDelMonstruo;
             if(this.verificarGanador()) {
                 return;
             }
 
-            this.ataqueDelMonstruo;
         },
 
         curar: function () {
@@ -56,10 +56,16 @@ new Vue({
             } else {
                 this.saludJugador=100
             }
+            this.turnos.unshift({
+                esJugador: true,
+                text: 'el jugador ha sanado un ' + damage
+            });
             this.ataqueDelMonstruo;
         },
 
         registrarEvento(evento) {
+
+            
         },
         terminarPartida: function () {
             this.hayUnaPartidaEnJuego=false;
@@ -68,6 +74,10 @@ new Vue({
         ataqueDelMonstruo: function () {
             var damage=this.calcularHeridas(5,12);
             this.saludJugador-=damage;
+            this.turnos.unshift({
+                esJugador: false,
+                text: 'el monstruo golpea al jugador por ' + damage
+            });
             this.verificarGanador();
 
         },
